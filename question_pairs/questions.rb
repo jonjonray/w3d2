@@ -196,6 +196,11 @@ end
         id = ?
       SQL
     end
+
+    def followers
+      QuestionFollow.followers_for_question_id(@id)
+    end
+
   end
 
   class QuestionFollow
@@ -243,7 +248,7 @@ end
     def self.followed_questions_for_user_id(u_id)
       data = QuestionsDBConnection.instance.execute(<<-SQL, u_id)
       SELECT
-        *
+        questions.*
       FROM
         question_follows
         LEFT JOIN questions ON questions.id = question_follows.question_id
