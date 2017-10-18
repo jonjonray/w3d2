@@ -1,6 +1,19 @@
 require 'sqlite3'
 require 'singleton'
 
+
+module Storage
+
+  def save
+    if @id
+      self.update
+    else
+      self.create
+    end
+  end
+  
+end
+
 class QuestionsDBConnection < SQLite3::Database
   include Singleton
 
@@ -12,6 +25,7 @@ class QuestionsDBConnection < SQLite3::Database
 end
 
 class User
+  include Storage
   attr_accessor :fname, :lname,:id
 
   def self.all
@@ -117,6 +131,8 @@ end
 
 
   class Question
+    include Storage
+
     attr_accessor :title, :body, :author_id
 
     def self.all
@@ -241,6 +257,7 @@ end
   end
 
   class QuestionFollow
+    include Storage
     attr_accessor :user_id, :question_id
 
     def self.all
@@ -372,6 +389,8 @@ end
   end
 
   class QuestionLike
+    include Storage
+
     attr_accessor :user_id, :question_id
 
     def self.all
@@ -519,7 +538,9 @@ end
   end
 
 class Reply
-    attr_accessor :question_id, :parent_id, :user_id, :reply_body
+  include Storage
+
+  attr_accessor :question_id, :parent_id, :user_id, :reply_body
 
   def self.all
     data = QuestionsDBConnection.instance.execute(<<-SQL)
